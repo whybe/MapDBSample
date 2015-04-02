@@ -13,7 +13,7 @@ import org.mapdb.TxRollbackException;
 public class QueueSample {
 
 	public static final String QUEUE_NAME = "fifo";
-	public static final String RESOURCE_PATH = "/Users/yb/Documents/MapDB/workspace/MapDBSample/src/main/resources/org/mapdb/sample";
+	public static final String RESOURCE_PATH = "src/main/resources/org/mapdb/sample";
 	public static final String DB_FILE = "fifo.mapdb";
 
 	public static void main(String[] args) throws InterruptedException {
