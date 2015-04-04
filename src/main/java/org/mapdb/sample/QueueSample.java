@@ -1,7 +1,6 @@
 package org.mapdb.sample;
 
 import java.io.File;
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 
 import org.mapdb.DB;
@@ -28,7 +27,7 @@ public class QueueSample {
 	private static void startQueueWithQueue(File dbFile) {
 		DB db = DBMaker.newFileDB(dbFile)
 				//.mmapFileEnableIfSupported() // need JVM(7+), it uses RAF by default.
-				.cacheDisable() // workaround internal error
+//				.cacheDisable() // workaround internal error
 				.closeOnJvmShutdown()
 				.make();
 		db.compact();
@@ -43,13 +42,13 @@ public class QueueSample {
 	}
 
 	private static void startQueueWithTx(File dbFile) {
-		TxMaker txMaker = DBMaker.newFileDB(dbFile)
-				//.mmapFileEnableIfSupported() // need JVM(7+), it uses RAF by default.
-				.cacheDisable() // workaround internal error
+		TxMaker txMaker = DBMaker
+				.newFileDB(dbFile)
+//				.mmapFileEnableIfSupported() // need JVM(7+), it uses RAF by default.
+//				.cacheDisable() // workaround internal error
 				.closeOnJvmShutdown()
 				.makeTxMaker();
 		txMaker.execute(new TxBlock() {
-			@Override
 			public void tx(DB db) throws TxRollbackException {
 				db.compact();
 			}
@@ -66,7 +65,7 @@ public class QueueSample {
 	private static void startQueueWithDb(File dbFile) {
 		DB db = DBMaker.newFileDB(dbFile)
 				//.mmapFileEnableIfSupported() // need JVM(7+), it uses RAF by default.
-				.cacheDisable() // workaround internal error
+//				.cacheDisable() // workaround internal error
 				.closeOnJvmShutdown()
 				.make();
 		db.compact();

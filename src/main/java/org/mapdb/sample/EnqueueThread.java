@@ -1,9 +1,9 @@
 package org.mapdb.sample;
 
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.mapdb.DB;
 import org.mapdb.TxBlock;
 import org.mapdb.TxMaker;
@@ -28,25 +28,31 @@ public class EnqueueThread extends QueueThread implements Runnable {
 		while (true) {
 			if (tx != null)
 				tx.execute(new TxBlock() {
-					@Override
 					public void tx(DB db) throws TxRollbackException {
-						String item = RandomStringUtils.randomAlphabetic(randInt(1, 100));
+						String item = RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(1, 100));
 						db.getQueue(queueName).add(item);
 						//db.commit(); // it doesn't need.
 						System.out.println("Enqueue - " + item);
+						
+						try {
+							Thread.sleep(RandomUtils.nextInt(1, 100));
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				});
 			else
 			{
-				String item = RandomStringUtils.randomAlphabetic(randInt(1, 100));
+				String item = RandomStringUtils.randomAlphabetic(RandomUtils.nextInt(1, 100));
 				enqueue(item);
-			}
 
-			try {
-				Thread.sleep(randInt(1, 100));
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				try {
+					Thread.sleep(RandomUtils.nextInt(1, 100));
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}

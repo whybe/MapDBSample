@@ -1,6 +1,5 @@
 package org.mapdb.sample;
 
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 
 import org.mapdb.DB;
@@ -46,18 +45,5 @@ public abstract class QueueThread implements Runnable {
 
 	public static DB makeDb(TxMaker tx) {
 		return tx.makeTx();
-	}
-
-	public static int randInt(int min, int max) {
-
-		// NOTE: Usually this should be a field rather than a method
-		// variable so that it is not re-seeded every call.
-		Random rand = new Random();
-
-		// nextInt is normally exclusive of the top value,
-		// so add 1 to make it inclusive
-		int randomNum = rand.nextInt((max - min) + 1) + min;
-
-		return randomNum;
 	}
 }
