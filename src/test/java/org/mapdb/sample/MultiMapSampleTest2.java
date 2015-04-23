@@ -3,18 +3,15 @@ package org.mapdb.sample;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.NavigableMap;
-import java.util.NavigableSet;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
-import org.mapdb.HTreeMap;
-
-import com.sun.javafx.collections.MappingChange.Map;
 
 public class MultiMapSampleTest2 {
 //	public static final String MULTIMAP_NAME_STRING_AND_INTEGER = "multimapsi";
@@ -26,9 +23,13 @@ public class MultiMapSampleTest2 {
 	
 	private DB db;
 	
-	@Before
-	public void setUp() throws Exception {
+	@Before public void setUp() throws Exception {
 		File dbFile = new File(RESOURCE_PATH, DB_FILE);
+		if (dbFile.exists()) {
+			FileUtils.forceDelete(dbFile);
+		} else {
+			FileUtils.touch(dbFile);
+		}
 //		if (dbFile.exists()) {
 //			dbFile.delete();
 //		}
@@ -44,8 +45,11 @@ public class MultiMapSampleTest2 {
 //		db.compact();
 	}
 
-	@Test
-	public void test() {
+	@After public void tearDown() {
+		db.close();
+	}
+
+	@Test public void test() {
 		// arrange
 		BTreeMap<String, byte[]> map = db.getTreeMap("treemap");
 		byte[] value = Util.getRandomByteArray(10);

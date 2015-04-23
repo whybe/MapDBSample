@@ -3,12 +3,6 @@ apply plugin: 'eclipse'
 
 sourceCompatibility = 1.8
 version = '1.0'
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'Gradle Quickstart',
-                   'Implementation-Version': version
-    }
-}
 
 repositories {
     mavenCentral()
@@ -18,19 +12,8 @@ repositories {
 dependencies {
     //compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
     compile 'org.apache.commons:commons-lang3:3.3.2'
+    compile 'org.apache.commons:commons-io:1.3.2'
     compile 'org.mapdb:mapdb:2.0.0-SNAPSHOT'
     testCompile 'junit:junit:4.+'
     testCompile 'pl.pragmatists:JUnitParams:1.+'
-}
-
-test {
-    systemProperties 'property': 'value'
-}
-
-uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
-    }
 }

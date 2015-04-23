@@ -1,10 +1,12 @@
 package org.mapdb.sample;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NavigableSet;
 
+import org.apache.commons.io.FileUtils;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeKeySerializer.ArrayKeySerializer;
 import org.mapdb.DB;
@@ -19,8 +21,13 @@ public class MultiMapSample {
 	public static final String RESOURCE_PATH = "src/main/resources/org/mapdb/sample";
 	public static final String DB_FILE = "multimap.mapdb";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		File dbFile = new File(RESOURCE_PATH, DB_FILE);
+		if (dbFile.exists()) {
+			FileUtils.forceDelete(dbFile);
+		} else {
+			FileUtils.touch(dbFile);
+		}
 
 		DB db = DBMaker
 				.fileDB(dbFile)

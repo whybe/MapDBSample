@@ -3,6 +3,7 @@ package org.mapdb.sample;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -12,6 +13,8 @@ import java.util.SortedSet;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mapdb.BTreeKeySerializer;
@@ -20,6 +23,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Fun;
 import org.mapdb.Serializer;
+import org.apache.commons.io.FileUtils;
 
 @RunWith(JUnitParamsRunner.class)
 public class MultiMapSampleTest {
@@ -30,23 +34,35 @@ public class MultiMapSampleTest {
 
 	public static final String RESOURCE_PATH = "src/test/resources/org/mapdb/sample";
 	public static final String DB_FILE = "multimap.mapdb";
-
-	@Test
-	public void MutimapFileCommitTestWithStringAndString() {
+	private DB db;
+	
+	@Before public void setUp() throws Exception {
 		File dbFile = new File(RESOURCE_PATH, DB_FILE);
+		if (dbFile.exists()) {
+			FileUtils.forceDelete(dbFile);
+		} else {
+			FileUtils.touch(dbFile);
+		}
 //		if (dbFile.exists()) {
 //			dbFile.delete();
 //		}
 
-		DB db = DBMaker.fileDB(dbFile)
+		db = DBMaker.fileDB(dbFile)
 				//.mmapFileEnableIfSupported() // need JVM(7+), it uses RAF by default.
 				//.cacheDisable() // workaround internal error
 				//.transactionDisable()
+				.snapshotEnable()
 				.closeOnJvmShutdown()
 				.deleteFilesAfterClose()
 				.make();
 //		db.compact();
+	}
+	
+	@After public void tearDown() {
+		db.close();
+	}
 
+	@Test public void MutimapFileCommitTestWithStringAndString() throws IOException {
 		NavigableSet<Object[]> multiMap = db
 				.createTreeSet(MULTIMAP_NAME_STRING_AND_INTEGER)
 				.serializer(BTreeKeySerializer.ARRAY2)
@@ -61,8 +77,6 @@ public class MultiMapSampleTest {
 
 		assertEquals(true, multiMap.contains(new Object[] { key, value }));
 		assertEquals(value, Fun.filter(multiMap, key).iterator().next()[1]);
-
-		db.close();
 	}
 
 	private static final Object[] getItemsWithStringAndByteArray() {
@@ -91,23 +105,9 @@ public class MultiMapSampleTest {
 
 	}
 
-	@Test
+	
 	@Parameters(method = "getItemsWithStringAndByteArray")
-	public void mutimapFileCommitTestWithStringAndByteArray(String key, byte[] value) {
-		File dbFile = new File(RESOURCE_PATH, DB_FILE);
-//		if (dbFile.exists()) {
-//			dbFile.delete();
-//		}
-
-		DB db = DBMaker.fileDB(dbFile)
-				//.mmapFileEnableIfSupported() // need JVM(7+), it uses RAF by default.
-				//.cacheDisable() // workaround internal error
-				//.transactionDisable()
-				.closeOnJvmShutdown()
-				.deleteFilesAfterClose()
-				.make();
-//		db.compact();
-
+	@Test public void mutimapFileCommitTestWithStringAndByteArray(String key, byte[] value) throws IOException {
 		NavigableSet<Object[]> multiMap = db
 				.createTreeSet(MULTIMAP_NAME_STRING_AND_BYTE_ARRAY)
 				.comparator(
@@ -125,8 +125,6 @@ public class MultiMapSampleTest {
 
 		assertEquals(true, multiMap.contains(new Object[] { key, value }));
 		assertArrayEquals(value, (byte[]) Fun.filter(multiMap, key).iterator().next()[1]);
-
-		db.close();
 	}
 
 	private static final Object[] getItemsWithFourKeysAndOneValue() {
@@ -144,22 +142,7 @@ public class MultiMapSampleTest {
 		};
 	}
 
-	@Test
-	public void mutimapFilterTest() {
-		File dbFile = new File(RESOURCE_PATH, DB_FILE);
-//		if (dbFile.exists()) {
-//			dbFile.delete();
-//		}
-
-		DB db = DBMaker.fileDB(dbFile)
-				//.mmapFileEnableIfSupported() // need JVM(7+), it uses RAF by default.
-				//.cacheDisable() // workaround internal error
-				//.transactionDisable()
-				.closeOnJvmShutdown()
-				//				.deleteFilesAfterClose()
-				.make();
-//		db.compact();
-
+	@Test public void mutimapFilterTest() throws IOException {
 		NavigableSet<Object[]> multiMap = db
 				.createTreeSet(MULTIMAP_NAME_5_STRING)
 				.comparator(
@@ -260,10 +243,6 @@ public class MultiMapSampleTest {
 			iter.next();
 		}
 		assertEquals(0, count);
-		
-		
-
-		db.close();
 	}
 
 }
