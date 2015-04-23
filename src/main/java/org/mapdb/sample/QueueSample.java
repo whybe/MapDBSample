@@ -25,7 +25,7 @@ public class QueueSample {
 	}
 
 	private static void startQueueWithQueue(File dbFile) {
-		DB db = DBMaker.newFileDB(dbFile)
+		DB db = DBMaker.fileDB(dbFile)
 				//.mmapFileEnableIfSupported() // need JVM(7+), it uses RAF by default.
 //				.cacheDisable() // workaround internal error
 				.closeOnJvmShutdown()
@@ -43,11 +43,13 @@ public class QueueSample {
 
 	private static void startQueueWithTx(File dbFile) {
 		TxMaker txMaker = DBMaker
-				.newFileDB(dbFile)
+				.fileDB(dbFile)
 //				.mmapFileEnableIfSupported() // need JVM(7+), it uses RAF by default.
 //				.cacheDisable() // workaround internal error
 				.closeOnJvmShutdown()
 				.makeTxMaker();
+		
+//		String s = txMaker.execute((db) -> (""));
 		txMaker.execute(new TxBlock() {
 			public void tx(DB db) throws TxRollbackException {
 				db.compact();
@@ -63,7 +65,7 @@ public class QueueSample {
 	}
 
 	private static void startQueueWithDb(File dbFile) {
-		DB db = DBMaker.newFileDB(dbFile)
+		DB db = DBMaker.fileDB(dbFile)
 				//.mmapFileEnableIfSupported() // need JVM(7+), it uses RAF by default.
 //				.cacheDisable() // workaround internal error
 				.closeOnJvmShutdown()

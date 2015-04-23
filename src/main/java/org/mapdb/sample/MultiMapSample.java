@@ -23,7 +23,7 @@ public class MultiMapSample {
 		File dbFile = new File(RESOURCE_PATH, DB_FILE);
 
 		DB db = DBMaker
-				.newFileDB(dbFile)
+				.fileDB(dbFile)
 //				.mmapFileEnableIfSupported() // need JVM(7+), it uses RAF by default.
 //				.mmapFileEnable() //occur error when db is closed.
 //				.cacheDisable() // workaround internal error
@@ -35,7 +35,7 @@ public class MultiMapSample {
 				.make();
 		db.compact();
 
-		//stringAndInteger(db, MULTIMAP_NAME_STRING_AND_INTEGER);
+		stringAndInteger(db, MULTIMAP_NAME_STRING_AND_INTEGER);
 
 		stringAndByteArray(db, MULTIMAP_NAME_STRING_AND_BYTE_ARRAY);
 
@@ -117,14 +117,14 @@ public class MultiMapSample {
 
 		StopWatch.start();
 		for (int i = 0; i < count; i++) {
-			addItem(db, multiMap);
+			addItem(multiMap);
 			db.commit();
 		}
 		StopWatch.stop(count + " times add item and commit with each");
 		
 		StopWatch.start();
 		for (int i = 0; i < count; i++) {
-			addItem(db, multiMap);
+			addItem(multiMap);
 		}
 		StopWatch.reset(count + " times add item all");
 		db.commit();
@@ -137,11 +137,11 @@ public class MultiMapSample {
 		StopWatch.stop(count + " times search item");
 	}
 
-	private static void addItem(DB db, NavigableSet<Object[]> multiMap, Object[] item) {
+	private static void addItem(NavigableSet<Object[]> multiMap, Object[] item) {
 		multiMap.add(item);
 	}
 	
-	private static void addItem(DB db, NavigableSet<Object[]> multiMap) {
+	private static void addItem(NavigableSet<Object[]> multiMap) {
 		multiMap.add(new Object[] {
 				Util.getRandomString(1, 100),
 				Util.getRandomByteArray(1, 100) });
